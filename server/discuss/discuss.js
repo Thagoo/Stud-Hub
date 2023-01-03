@@ -15,21 +15,17 @@ function socket(socketIO) {
 
     socket.on("join_room", (data) => {
       const { username, room } = data;
+      socket.to(room).emit("user_joined", {
+        username: username,
+      });
       socket.join(room);
 
       chatRoom = room;
       allUsers.push({ id: socket.id, username, room });
       console.log(allUsers);
       chatRoomUsers = allUsers.filter((user) => user.room === room);
-      socket.on("mute"),
-        (data) => {
-          mutedUsers.push({
-            id: data.socket.id,
-            username: data.username,
-            room: data.room,
-          });
-        };
-      console.log(mutedUsers);
+
+      //console.log(mutedUsers);
       socketIO.to(room).emit("room_users", chatRoomUsers);
       socket.emit("room_users", chatRoomUsers);
       socket.on("message", (data) => {

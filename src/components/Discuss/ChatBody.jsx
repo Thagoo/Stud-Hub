@@ -16,7 +16,7 @@ import { useEffect } from "react";
 
 const ChatBody = ({ username, messages, socket, room, lastMessageRef }) => {
   const [open, setOpen] = useState(false);
-  const [userleft, setUserleft] = useState("");
+  const [greeting, setGreeting] = useState("");
   const handleClose = () => {
     setOpen(false);
   };
@@ -33,7 +33,13 @@ const ChatBody = ({ username, messages, socket, room, lastMessageRef }) => {
 
   useEffect(() => {
     socket.on("user_left", (data) => {
-      setUserleft(data.username);
+      setGreeting(data.username + " has left the chat");
+      setOpen(true);
+    });
+  });
+  useEffect(() => {
+    socket.on("user_joined", (data) => {
+      setGreeting(data.username + " has joined the chat");
       setOpen(true);
     });
   });
@@ -46,7 +52,7 @@ const ChatBody = ({ username, messages, socket, room, lastMessageRef }) => {
             open={open}
             autoHideDuration={2000}
             onClose={handleClose}
-            message={userleft + " has left the chat"}
+            message={greeting}
             action={closeSnackBar}
           />
           <Alert variant="dark">
