@@ -33,7 +33,11 @@
   padding-left: 2vh;
   padding-right: 2vh;
 }
-
+.msg-bubble {
+  width: fit-content;
+  word-wrap: break-word;
+  max-width: 50vh;
+}
 @media only screen and (max-width: 768px) {
   .logo-header-chat {
     height: 6vh;
@@ -46,5 +50,8 @@
   }
   .chat-bar {
     display: none;
+  }
+  .msg-bubble {
+    max-width: 25vh;
   }
 }
