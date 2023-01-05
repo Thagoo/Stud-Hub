@@ -2,6 +2,7 @@
   padding-top: 5%;
   padding-bottom: 10%;
   background-color: #0d6efd;
+  overflow-x: hidden;
 }
 .auth-inner {
   height: auto;
@@ -23,7 +24,6 @@
   font-weight: bold;
   text-align: center;
   color: hsla(248, 25%, 88%, 0.795);
-  width: 60vh;
 }
 .stud-logo-footer {
   height: 6vh;
