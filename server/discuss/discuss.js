@@ -1,3 +1,4 @@
+const { chat_db_save, chat_db_get } = require("./chat_db");
 let date = new Date();
 let time_h = date.getHours();
 let time_m = date.getMinutes();
@@ -6,6 +7,7 @@ let time = `${time_h}:${time_m}`;
 let chatRoom = "";
 let allUsers = [];
 let mutedUsers = [];
+
 function leaveRoom(userID, chatRoomUsers) {
   return chatRoomUsers.filter((user) => user.id != userID);
 }
@@ -13,13 +15,15 @@ function socket(socketIO) {
   socketIO.on(`connection`, (socket) => {
     console.log(`status: ${socket.id} user just connected!`);
 
-    socket.on("join_room", (data) => {
+    socket.on("join_room", async (data) => {
       const { username, room } = data;
+      socket.join(room);
       socket.to(room).emit("user_joined", {
         username: username,
       });
-      socket.join(room);
-
+      chats = await chat_db_get();
+      //console.log(chats);
+      socketIO.to(room).emit("chat_history", chats);
       chatRoom = room;
       allUsers.push({ id: socket.id, username, room });
       console.log(allUsers);
@@ -29,9 +33,12 @@ function socket(socketIO) {
       socketIO.to(room).emit("room_users", chatRoomUsers);
       socket.emit("room_users", chatRoomUsers);
       socket.on("message", (data) => {
-        console.log(data.username, data.message);
+        console.log(data.username, data.message, data.id, data.socketID, time);
+        chat_db_save(data);
         socketIO.in(room).emit("messageRes", data);
       });
+
+      // [TODO] On disconnect
       socket.on("leave_room", (data) => {
         const { username, room } = data;
         socket.leave(room);

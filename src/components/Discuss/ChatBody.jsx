@@ -117,7 +117,6 @@ const ChatBody = ({ username, messages, socket, room, lastMessageRef }) => {
                   </Popover>
 
                   <List
-                    button
                     key="1"
                     className="msg-bubble"
                     style={{
@@ -134,12 +133,30 @@ const ChatBody = ({ username, messages, socket, room, lastMessageRef }) => {
                         <ListItemText secondary={message.username} />
                       </ListItem>
                     )}
-                    <ListItem button onClick={handleOptionShow}>
-                      <ListItemText
-                        primary={message.message}
-                        secondary={message.time}
-                      />
-                    </ListItem>
+                    <div
+                      onClick={handleOptionShow}
+                      style={{
+                        padding: `6px 10px 6px 10px`,
+                        cursor: `pointer`,
+                        marginLeft: `${
+                          message.username == username ? "0" : "5vh"
+                        }`,
+                        borderRadius: `15px`,
+                        backgroundColor: `${
+                          message.username == username ? "#3f51b5" : "#e0e0e0"
+                        }`,
+                        color: `${
+                          message.username == username ? "white" : "#1d1d1d"
+                        }`,
+                        textAlign: `center`,
+                      }}
+                    >
+                      <ListItemText primary={message.message} />
+                    </div>
+                    <ListItemText
+                      secondary={message.time}
+                      style={{ marginLeft: `5vh` }}
+                    />
                   </List>
                 </Grid>
                 <Grid item xs={11}>

@@ -3,8 +3,31 @@ const app = express();
 
 const cors = require("cors");
 const mongoose = require("mongoose");
-app.use(express.json());
-app.use(express.urlencoded());
+const bodyParser = require("body-parser");
+
+const { uploadToGoogleDrive } = require("./uploads/uploader");
+const { authenticateGoogle } = require("./uploads/auth-google");
+const fs = require("fs");
+const multer = require("multer");
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: function (req, file, callback) {
+      callback(
+        null,
+        //`${__dirname}/${req.body.course}/${req.body.sem}/${req.body.subject}/`
+        `${__dirname}/uploads/`
+      );
+    },
+    filename: function (req, file, callback) {
+      callback(null, file.originalname);
+    },
+  }),
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+  },
+});
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(cors());
 
 const { Server } = require("socket.io");
@@ -83,6 +106,27 @@ app.post("/register", async (req, res) => {
       });
     }
   });
+});
+app.post("/upload-to-google-drive", upload.single("file"), async (req, res) => {
+  await console.log(req.file.originalname);
+  const subject = req.body.subject;
+  const auth = authenticateGoogle();
+  const file = req.file;
+
+  const response = await uploadToGoogleDrive(file, auth, subject);
+  res.status(200).json({ response });
+
+  fileSection = `${req.body.course}/${req.body.sem}/${req.body.subject}/`;
+  const dir = `${__dirname}/uploads/study-materials/${fileSection}`;
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  const file_path = dir + req.file.originalname;
+  fs.rename(req.file.path, file_path, (err) => {
+    if (err) throw err;
+    console.log("File moved!");
+  });
+  console.log(req.body);
 });
 app.use(express.static(path.join(__dirname, "build")));
 

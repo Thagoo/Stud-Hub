@@ -4,17 +4,41 @@ import Col from "react-bootstrap/Col";
 import Nav from "react-bootstrap/Nav";
 import Row from "react-bootstrap/Row";
 import Tab from "react-bootstrap/Tab";
-import { Container, Tabs } from "react-bootstrap";
+import { Container, Tabs, Modal, Button } from "react-bootstrap";
 import ListGroup from "react-bootstrap/ListGroup";
 import { useState } from "react";
 import Discuss from "../Discuss/DiscussHome";
+import GoogleDriveUploader from "./Uploader";
 
 function StudyMaterials(props) {
+  // Chat Modal
   const [show, setShow] = useState(false);
-
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  // File Uploader Modal
+  const [showUploader, setShowUploader] = useState(false);
+  const handleCloseUploader = () => setShowUploader(false);
+  const handleShowUploader = () => setShowUploader(true);
+  const UploaderModal = () => {
+    return (
+      <Modal
+        animation={true}
+        show={showUploader}
+        onHide={handleCloseUploader}
+        size="md"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Upload Study Materials</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <GoogleDriveUploader />
+        </Modal.Body>
+      </Modal>
+    );
+  };
   return (
     <>
       <NavbarHeader handleShow={handleShow} username={props.username} />
@@ -61,36 +85,36 @@ function StudyMaterials(props) {
                     <Tab eventKey="4" title="4th Semester"></Tab>
                     <Tab eventKey="5" title="5th Semester">
                       <h1 style={{ fontSize: `25px`, textAlign: `center` }}>
-                        Question Papers
+                        Study Materials
                       </h1>
                       <ListGroup>
                         <ListGroup.Item
                           action
-                          href="https://www.spmcollege.ac.in/questionpapers/Question-paper-2021/BCA/V-Sem/Computer-Architecture.pdf"
+                          href="https://stud-hub.lohitgowda56.workers.dev/0:/BCA/5TH%20SEMESTER/Computer%20Archtecture/"
                         >
                           Computer Archtecture
                         </ListGroup.Item>
                         <ListGroup.Item
                           action
-                          href="https://www.spmcollege.ac.in/questionpapers/Question-paper-2021/BCA/V-Sem/Data-Communication-and-Networks.pdf"
+                          href="https://stud-hub.lohitgowda56.workers.dev/0:/BCA/5TH%20SEMESTER/Data-Communication%20and%20Networks/"
                         >
                           Data-Communication and Networks
                         </ListGroup.Item>
                         <ListGroup.Item
                           action
-                          href="https://www.spmcollege.ac.in/questionpapers/Question-paper-2021/BCA/V-Sem/Java-Programming.pdf"
+                          href="https://stud-hub.lohitgowda56.workers.dev/0:/BCA/5TH%20SEMESTER/Java%20Programming/"
                         >
                           Java Programming
                         </ListGroup.Item>
                         <ListGroup.Item
                           action
-                          href="https://www.spmcollege.ac.in/questionpapers/Question-paper-2021/BCA/V-Sem/Microprocessor-and-Assembly-Language.pdf"
+                          href="https://stud-hub.lohitgowda56.workers.dev/0:/BCA/5TH%20SEMESTER/Microprocessor%20and%20Assembly%20language/"
                         >
                           Microprocessor and Assembly language
                         </ListGroup.Item>
                         <ListGroup.Item
                           action
-                          href="https://www.spmcollege.ac.in/questionpapers/Question-paper-2021/BCA/V-Sem/Software-Engineering.pdf"
+                          href="https://stud-hub.lohitgowda56.workers.dev/0:/BCA/5TH%20SEMESTER/Software%20Engineering/"
                         >
                           Software Engineering
                         </ListGroup.Item>
@@ -129,10 +153,20 @@ function StudyMaterials(props) {
                     <Tab eventKey="6" title="6th Semester"></Tab>
                   </Tabs>
                 </Tab.Pane>
+                <Button
+                  onClick={handleShowUploader}
+                  style={{
+                    width: `100%`,
+                    marginTop: `8vh`,
+                  }}
+                >
+                  Upload Study Materials
+                </Button>
               </Tab.Content>
             </Col>
           </Row>
         </Tab.Container>
+        <UploaderModal />
       </Container>
     </>
   );

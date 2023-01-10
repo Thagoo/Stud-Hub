@@ -72,6 +72,12 @@ const Chat = ({ toggleDark, settoggleDark, username, socket, room }) => {
   });
 
   useEffect(() => {
+    socket.on("chat_history", (data) => {
+      setMessages([...messages, ...data]);
+    });
+  }, []);
+
+  useEffect(() => {
     // 👇️ scroll to bottom every time messages change
     lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);

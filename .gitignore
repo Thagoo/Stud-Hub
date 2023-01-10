@@ -16,6 +16,8 @@ start
 .DS_Store
 .env
 server/.env
+server/uploads/study-materials
+server/uploads/service-account-key-file.json
 .env.local
 .env.development.local
 .env.test.local
