@@ -60,7 +60,6 @@ const NavbarHeader = (props) => {
                       Study Materials
                     </Nav.Link>
                   </LinkContainer>
-
                   <Nav.Link onClick={props.handleShow}>
                     <QuestionAnswerTwoToneIcon />
                     Chat

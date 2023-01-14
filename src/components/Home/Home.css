@@ -5,28 +5,77 @@
   height: 100vh;
   padding-top: 12vh;
 }
-.home-text {
-  padding-top: 35vh;
+.home-deco {
+  clear: left;
 }
-#title-text {
-  font-size: 10vh;
-  color: aliceblue;
+.title-deco {
+  padding-top: 15vh;
+  flex-grow: 1;
 }
-#subtitle {
-  font-size: 3vh;
-  color: aliceblue;
+.heading {
+  color: #2f2e41;
+  font-weight: 900;
+  font-size: 65px;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  margin-top: 0px;
+  margin-bottom: 2px;
 }
+.title {
+  color: #0d6efd;
+  font-size: 45px;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-weight: 600;
+}
+.subtitle {
+  color: #0d6efd;
+  font-weight: 400;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+}
+.home-deco-icon {
+  height: 85vh;
+  float: right;
+  padding-top: 15vh;
+}
+
 .news-title {
   padding: 5vh;
   color: #253858;
 }
 
-.news-container {
-  padding-top: 55vh;
-}
 .news-cards {
   border-style: solid;
   border-width: 1px;
   margin: 1vh;
   box-shadow: 0px 5px 30px 0px rgba(214, 215, 216, 0.57);
+}
+.stud-footer {
+  padding: 6vh;
+  margin-top: 6vh;
+  border-top: 1px solid #dfdfdf;
+  height: 100%;
+  background-color: #f7f7f7;
+}
+.stud-logo-footer {
+  height: 8vh;
+  margin-bottom: 2vh;
+  filter: invert(52%) sepia(84%) saturate(4896%) hue-rotate(211deg)
+    brightness(104%) contrast(98%);
+}
+@media only screen and (max-width: 768px) {
+  .home-deco-icon {
+    float: center;
+    padding-top: 5vh;
+    height: 35vh;
+  }
+  .title {
+    font-size: 40px;
+  }
+  .title-deco {
+    text-align: center;
+    padding-top: 5vh;
+  }
+  .stud-logo-home {
+    margin-top: 6vh;
+    height: 8vh;
+  }
 }
