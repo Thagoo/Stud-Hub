@@ -5,6 +5,21 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 
+const { Server } = require("socket.io");
+const server = app.listen("8000", () => {
+  console.log(`Server listening on 8000`);
+});
+
+// Chat Server
+const server2 = require("http").createServer(server);
+const socketIO = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
+require("./discuss/discuss")(socketIO);
+
 const { uploadToGoogleDrive } = require("./uploads/uploader");
 const { authenticateGoogle } = require("./uploads/auth-google");
 const fs = require("fs");
@@ -30,7 +45,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
 
-const { Server } = require("socket.io");
 const path = require("path");
 require("dotenv").config({ path: "./.env" });
 const bcrypt = require("bcrypt");
@@ -107,43 +121,36 @@ app.post("/register", async (req, res) => {
     }
   });
 });
-app.post("/upload-to-google-drive", upload.single("file"), async (req, res) => {
-  await console.log(req.file.originalname);
-  const subject = req.body.subject;
-  const auth = authenticateGoogle();
-  const file = req.file;
-
-  const response = await uploadToGoogleDrive(file, auth, subject);
-  res.status(200).json({ response });
-
-  fileSection = `${req.body.course}/${req.body.sem}/${req.body.subject}/`;
-  const dir = `${__dirname}/uploads/study-materials/${fileSection}`;
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-  const file_path = dir + req.file.originalname;
-  fs.rename(req.file.path, file_path, (err) => {
-    if (err) throw err;
-    console.log("File moved!");
-  });
-  console.log(req.body);
+socketIO.on("connection", async (socket) => {
+  console.log("Uploader socket connected");
+  app.post(
+    "/upload-to-google-drive",
+    upload.single("file"),
+    async (req, res) => {
+      await console.log(req.file.originalname);
+      const subject = req.body.subject;
+      const auth = authenticateGoogle();
+      const file = req.file;
+      try {
+        const response = await uploadToGoogleDrive(
+          file,
+          auth,
+          subject,
+          socketIO
+        );
+        res.status(200).json({ response });
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  );
 });
 app.use(express.static(path.join(__dirname, "build")));
 
-//app.get("/*", (req, res) => {
-//  res.sendFile(path.join(__dirname, "build", "index.html"));
-//});
+app.get("/*", (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
+});
+
 app.get("/envapi", async (req, res) => {
   res.send(NEWS_API_ID);
 });
-const server = app.listen("8000", () => {
-  console.log(`Server listening on 8000`);
-});
-const server2 = require("http").createServer(server);
-const socketIO = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
-  },
-});
-require("./discuss/discuss")(socketIO);

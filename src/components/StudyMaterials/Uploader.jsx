@@ -1,11 +1,20 @@
-import React, { useState } from "react";
-import { Button, Form, Alert } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Button, Form, Alert, ProgressBar } from "react-bootstrap";
 import { Formik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
 
-function GoogleDriveUploader() {
+function GoogleDriveUploader({ socket }) {
+  const [progress, setProgress] = useState(0);
   const [showFileAlert, setShowFileAlert] = useState("true");
+  const [showProgressAlert, setShowProgressAlert] = useState("true");
+  const [progressCompleted, setProgressCompleted] = useState("false");
+  const handleProgressReset = () => {
+    setProgress(0);
+    setProgressCompleted(false);
+  };
+  const [lockFileInput, setLockFileInput] = useState("false");
+
   const course = [
     {
       label: "BCA",
@@ -33,34 +42,32 @@ function GoogleDriveUploader() {
       label: "Bcom",
       value: "bcom",
       sems: [
+        { label: "Semsester 1", value: "sem1", subject: [] },
+        { label: "Semsester 2", value: "sem2", subject: [] },
+        { label: "Semsester 3", value: "sem3", subject: [] },
+        { label: "Semsester 4", value: "sem4", subject: [] },
         {
-          label: "Sem",
-          options: [
-            { label: "Semsester 1", value: "sem1" },
-            { label: "Semsester 2", value: "sem2" },
-            { label: "Semsester 3", value: "sem3" },
-            { label: "Semsester 4", value: "sem4" },
-            { label: "Semsester 5", value: "sem5" },
-            { label: "Semsester 6", value: "sem6" },
-          ],
+          label: "Semsester 5",
+          value: "sem5",
+          subject: [],
         },
+        { label: "Semsester 6", value: "sem6", subject: [] },
       ],
     },
     {
       label: "BA",
       value: "ba",
       sems: [
+        { label: "Semsester 1", value: "sem1", subject: [] },
+        { label: "Semsester 2", value: "sem2", subject: [] },
+        { label: "Semsester 3", value: "sem3", subject: [] },
+        { label: "Semsester 4", value: "sem4", subject: [] },
         {
-          label: "Sem",
-          options: [
-            { label: "Semsester 1", value: "sem1" },
-            { label: "Semsester 2", value: "sem2" },
-            { label: "Semsester 3", value: "sem3" },
-            { label: "Semsester 4", value: "sem4" },
-            { label: "Semsester 5", value: "sem5" },
-            { label: "Semsester 6", value: "sem6" },
-          ],
+          label: "Semsester 5",
+          value: "sem5",
+          subject: [],
         },
+        { label: "Semsester 6", value: "sem6", subject: [] },
       ],
     },
   ];
@@ -73,13 +80,14 @@ function GoogleDriveUploader() {
   });
 
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
-    console.log("test", values);
+    setLockFileInput(true);
     var formData = new FormData();
     formData.append("file", values.file);
     formData.append("course", values.course);
     formData.append("sem", values.sem);
     formData.append("subject", values.subject);
     console.log("test", formData);
+
     await axios
       .post("/upload-to-google-drive", formData)
       .then((response) => {
@@ -90,8 +98,47 @@ function GoogleDriveUploader() {
       });
   };
 
+  useEffect(() => {
+    socket.on("progress", (progress) => {
+      setProgress(progress);
+    });
+    console.log(progressCompleted);
+    console.log(progress);
+
+    if (progress === 100) {
+      setShowProgressAlert(false);
+      setProgressCompleted(true);
+      setLockFileInput(false);
+    } else {
+      setShowProgressAlert(true);
+      setProgressCompleted(false);
+    }
+    console.log(lockFileInput);
+  });
   return (
     <>
+      {progress ? (
+        <div>
+          <ProgressBar striped animated now={progress} label={`${progress}%`} />
+          <Alert
+            variant="warning"
+            show={showProgressAlert}
+            onClose={() => setShowProgressAlert(false)}
+            dismissible
+          >
+            Your file is being uploaded...
+          </Alert>
+          <Alert
+            variant="success"
+            show={progressCompleted}
+            onClose={handleProgressReset}
+            dismissible
+          >
+            File upload Done !
+          </Alert>
+        </div>
+      ) : null}
+
       <Formik
         validationSchema={fileSchema}
         onSubmit={handleSubmit}
@@ -120,6 +167,7 @@ function GoogleDriveUploader() {
                   show={showFileAlert}
                   onClose={() => setShowFileAlert(false)}
                   dismissible
+                  size="sm"
                 >
                   Only PDF file is supported ! You can also drag and drop the
                   file !
@@ -137,6 +185,7 @@ function GoogleDriveUploader() {
                   setFieldValue("file", event.currentTarget.files[0])
                 }
               />
+
               <Form.Control.Feedback type="invalid">
                 {errors.file}
               </Form.Control.Feedback>
@@ -222,8 +271,12 @@ function GoogleDriveUploader() {
               </Form.Control.Feedback>
             </Form.Group>
 
-            <Button type="submit" style={{ width: `100%` }}>
-              Upload
+            <Button
+              type="submit"
+              variant="outline-primary"
+              style={{ width: `100%` }}
+            >
+              Submit
             </Button>
           </Form>
         )}

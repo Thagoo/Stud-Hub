@@ -34,7 +34,7 @@ function StudyMaterials(props) {
           <Modal.Title>Upload Study Materials</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <GoogleDriveUploader />
+          <GoogleDriveUploader socket={props.socket} />
         </Modal.Body>
       </Modal>
     );
@@ -90,31 +90,31 @@ function StudyMaterials(props) {
                       <ListGroup>
                         <ListGroup.Item
                           action
-                          href="https://stud-hub.lohitgowda56.workers.dev/0:/BCA/5TH%20SEMESTER/Computer%20Archtecture/"
+                          href="https://stud-hub.lohitgowda56.workers.dev/0:/Study-Materials/BCA/5TH%20SEMESTER/Computer%20Archtecture/"
                         >
                           Computer Archtecture
                         </ListGroup.Item>
                         <ListGroup.Item
                           action
-                          href="https://stud-hub.lohitgowda56.workers.dev/0:/BCA/5TH%20SEMESTER/Data-Communication%20and%20Networks/"
+                          href="https://stud-hub.lohitgowda56.workers.dev/0:/Study-Materials/BCA/5TH%20SEMESTER/Data-Communication%20and%20Networks/"
                         >
                           Data-Communication and Networks
                         </ListGroup.Item>
                         <ListGroup.Item
                           action
-                          href="https://stud-hub.lohitgowda56.workers.dev/0:/BCA/5TH%20SEMESTER/Java%20Programming/"
+                          href="https://stud-hub.lohitgowda56.workers.dev/0:/Study-Materials/BCA/5TH%20SEMESTER/Java%20Programming/"
                         >
                           Java Programming
                         </ListGroup.Item>
                         <ListGroup.Item
                           action
-                          href="https://stud-hub.lohitgowda56.workers.dev/0:/BCA/5TH%20SEMESTER/Microprocessor%20and%20Assembly%20language/"
+                          href="https://stud-hub.lohitgowda56.workers.dev/0:/Study-Materials/BCA/5TH%20SEMESTER/Microprocessor%20and%20Assembly%20language/"
                         >
                           Microprocessor and Assembly language
                         </ListGroup.Item>
                         <ListGroup.Item
                           action
-                          href="https://stud-hub.lohitgowda56.workers.dev/0:/BCA/5TH%20SEMESTER/Software%20Engineering/"
+                          href="https://stud-hub.lohitgowda56.workers.dev/0:/Study-Materials/BCA/5TH%20SEMESTER/Software%20Engineering/"
                         >
                           Software Engineering
                         </ListGroup.Item>
