@@ -1,5 +1,4 @@
 import axios from "axios";
-import "./Login.css";
 import { Form, Button, InputGroup } from "react-bootstrap";
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -18,6 +17,7 @@ const Login = () => {
   // login the user
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
     // send the uname and password to the server
+
     await axios
       .post("/login", values)
       .then((response) => {
