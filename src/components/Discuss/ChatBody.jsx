@@ -42,6 +42,7 @@ const ChatBody = ({ username, messages, socket, room, lastMessageRef }) => {
 
   const handleDeleteMsg = (messageID) => {
     console.log(messageID);
+    handleOptionClose();
     socket.emit("delete_msg", messageID);
   };
   const closeSnackBar = (
