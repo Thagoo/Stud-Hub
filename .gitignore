@@ -18,6 +18,7 @@ start
 server/.env
 server/uploads/study-materials
 server/uploads/service-account-key-file.json
+server/build
 .env.local
 .env.development.local
 .env.test.local
