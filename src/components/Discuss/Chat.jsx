@@ -3,14 +3,7 @@ import ChatBar from "./ChatBar";
 import ChatBody from "./ChatBody";
 import { makeStyles } from "@material-ui/core/styles";
 import { Container } from "react-bootstrap";
-import {
-  Navbar,
-  Button,
-  Offcanvas,
-  Nav,
-  Dropdown,
-  DropdownButton,
-} from "react-bootstrap";
+import { Navbar, Nav } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
 import { red } from "@material-ui/core/colors";
@@ -76,7 +69,12 @@ const Chat = ({ toggleDark, settoggleDark, username, socket, room }) => {
       setMessages([...messages, ...data]);
     });
   }, []);
-
+  useEffect(() => {
+    socket.on("delete_msg_res", (data) => {
+      console.log("working");
+      setMessages([...messages, ...data]);
+    });
+  }, []);
   useEffect(() => {
     // 👇️ scroll to bottom every time messages change
     lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });

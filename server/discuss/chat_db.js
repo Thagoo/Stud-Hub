@@ -48,4 +48,14 @@ async function chat_db_get() {
   //console.log(chats);
   return chats;
 }
-module.exports = { chat_db_save, chat_db_get };
+
+async function chat_db_delete(messageID) {
+  Chat.deleteOne({ id: messageID })
+    .then(() => {
+      console.log("message deleted", messageID);
+    })
+    .catch((error) => {
+      console.log("chat deletion failed", error);
+    });
+}
+module.exports = { chat_db_save, chat_db_get, chat_db_delete };

@@ -12,7 +12,6 @@ import {
   IconButton,
   Popover,
   MenuItem,
-  ListItemIcon,
   Avatar,
 } from "@material-ui/core/";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -27,14 +26,24 @@ const ChatBody = ({ username, messages, socket, room, lastMessageRef }) => {
     setOpen(false);
   };
 
+  const [messageID, setMessageID] = useState("");
   const [optionShow, setOptionShow] = useState(null);
-  const handleOptionShow = (event) => setOptionShow(event.currentTarget);
+  const handleOptionShow = (event, id) => {
+    setOptionShow(event.currentTarget);
+
+    setMessageID(id);
+  };
+
   const handleOptionClose = () => setOptionShow(null);
   const show = Boolean(optionShow);
   const msgOption = open ? "simple-popover" : undefined;
 
   const handleMute = () => {};
-  const handleDeleteMsg = () => {};
+
+  const handleDeleteMsg = (messageID) => {
+    console.log(messageID);
+    socket.emit("delete_msg", messageID);
+  };
   const closeSnackBar = (
     <IconButton
       size="small"
@@ -85,38 +94,37 @@ const ChatBody = ({ username, messages, socket, room, lastMessageRef }) => {
           </Alert>
 
           {messages.map((message) => (
-            <ListItem key="1">
+            <ListItem key={message.id}>
+              <Popover
+                id={msgOption}
+                open={show}
+                onClose={handleOptionClose}
+                anchorEl={optionShow}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "center",
+                  horizontal: "center",
+                }}
+              >
+                <MenuItem onClick={() => handleDeleteMsg(messageID)}>
+                  <DeleteIcon style={{ marginRight: `6px` }} />
+                  Delete
+                </MenuItem>
+                <MenuItem onClick={handleMute}>
+                  <RemoveCircleRoundedIcon style={{ marginRight: `6px` }} />
+                  Mute User
+                </MenuItem>
+              </Popover>
               <Grid container>
                 <Grid
                   item
                   xs={11}
                   style={{ display: `flex`, flexDirection: `column` }}
                 >
-                  <Popover
-                    id={msgOption}
-                    open={show}
-                    onClose={handleOptionClose}
-                    anchorEl={optionShow}
-                    anchorOrigin={{
-                      vertical: "top",
-                      horizontal: "center",
-                    }}
-                    transformOrigin={{
-                      vertical: "center",
-                      horizontal: "center",
-                    }}
-                  >
-                    <MenuItem onClick={handleDeleteMsg}>
-                      <DeleteIcon style={{ marginRight: `6px` }} />
-                      Delete
-                    </MenuItem>
-                    <MenuItem onClick={handleMute}>
-                      <RemoveCircleRoundedIcon style={{ marginRight: `6px` }} />
-                      Mute User
-                    </MenuItem>
-                  </Popover>
-
-                  <List
+                  <div
                     key="1"
                     className="msg-bubble"
                     style={{
@@ -134,7 +142,7 @@ const ChatBody = ({ username, messages, socket, room, lastMessageRef }) => {
                       </ListItem>
                     )}
                     <div
-                      onClick={handleOptionShow}
+                      onClick={(event) => handleOptionShow(event, message.id)}
                       style={{
                         padding: `6px 10px 6px 10px`,
                         cursor: `pointer`,
@@ -157,7 +165,7 @@ const ChatBody = ({ username, messages, socket, room, lastMessageRef }) => {
                       secondary={message.time}
                       style={{ marginLeft: `5vh` }}
                     />
-                  </List>
+                  </div>
                 </Grid>
                 <Grid item xs={11}>
                   <ListItemText

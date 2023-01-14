@@ -1,4 +1,4 @@
-const { chat_db_save, chat_db_get } = require("./chat_db");
+const { chat_db_save, chat_db_get, chat_db_delete } = require("./chat_db");
 let date = new Date();
 let time_h = date.getHours();
 let time_m = date.getMinutes();
@@ -21,7 +21,7 @@ function socket(socketIO) {
       socket.to(room).emit("user_joined", {
         username: username,
       });
-      chats = await chat_db_get();
+      const chats = await chat_db_get();
       //console.log(chats);
       socketIO.to(room).emit("chat_history", chats);
       chatRoom = room;
@@ -52,6 +52,17 @@ function socket(socketIO) {
 
         console.log(`${username} has left the chat`);
       });
+      socket.on("delete_msg", async (messageID) => {
+        console.log("message delete request", messageID);
+        //socket.emit("delete_msg_res", messageID);
+        await chat_db_delete(messageID);
+        const chats = await chat_db_get();
+        socket.emit("delete_msg_res", chats);
+      });
+    });
+
+    socket.on(`disconnect`, () => {
+      console.log("disconnnected");
     });
   });
 }
