@@ -27,21 +27,32 @@ const ChatBody = ({ username, messages, socket, room, lastMessageRef }) => {
   };
 
   const [messageID, setMessageID] = useState("");
+  const [messageUser, setMessageUser] = useState("");
   const [optionShow, setOptionShow] = useState(null);
-  const handleOptionShow = (event, id) => {
-    setOptionShow(event.currentTarget);
+  const handleOptionShow = (event, id, user) => {
     setMessageID(id);
+    setMessageUser(user);
+    setOptionShow(event.currentTarget);
   };
 
   const handleOptionClose = () => setOptionShow(null);
   const show = Boolean(optionShow);
   const msgOption = open ? "simple-popover" : undefined;
 
-  const handleMute = () => {};
+  const handleMute = () => {
+    socket.emit("mute_user", {
+      username: username,
+      messageUser: messageUser,
+    });
+    handleOptionClose();
+  };
 
-  const handleDeleteMsg = (messageID) => {
-    console.log(messageID);
-    socket.emit("delete_msg", messageID);
+  const handleDeleteMsg = () => {
+    socket.emit("delete_msg", {
+      username: username,
+      messageUser: messageUser,
+      messageID: messageID,
+    });
     handleOptionClose();
   };
   const closeSnackBar = (
@@ -64,6 +75,12 @@ const ChatBody = ({ username, messages, socket, room, lastMessageRef }) => {
   useEffect(() => {
     socket.on("user_joined", (data) => {
       setGreeting(data.username + " has joined the chat");
+      setOpen(true);
+    });
+  });
+  useEffect(() => {
+    socket.on("not_admin", (user) => {
+      setGreeting(`${user} is not admin to do this task`);
       setOpen(true);
     });
   });
@@ -109,7 +126,7 @@ const ChatBody = ({ username, messages, socket, room, lastMessageRef }) => {
                   horizontal: "center",
                 }}
               >
-                <MenuItem onClick={() => handleDeleteMsg(messageID)}>
+                <MenuItem onClick={handleDeleteMsg}>
                   <DeleteIcon style={{ marginRight: `6px` }} />
                   Delete
                 </MenuItem>
@@ -142,7 +159,9 @@ const ChatBody = ({ username, messages, socket, room, lastMessageRef }) => {
                       </ListItem>
                     )}
                     <div
-                      onClick={(event) => handleOptionShow(event, message.id)}
+                      onClick={(event) =>
+                        handleOptionShow(event, message.id, message.username)
+                      }
                       style={{
                         padding: `6px 10px 6px 10px`,
                         cursor: `pointer`,

@@ -7,7 +7,7 @@ let time = `${time_h}:${time_m}`;
 let chatRoom = "";
 let allUsers = [];
 let mutedUsers = [];
-
+let adminUsers = [];
 function leaveRoom(userID, chatRoomUsers) {
   return chatRoomUsers.filter((user) => user.id != userID);
 }
@@ -34,8 +34,10 @@ function socket(socketIO) {
       socket.emit("room_users", chatRoomUsers);
       socket.on("message", (data) => {
         console.log(data.username, data.message, data.id, data.socketID, time);
-        chat_db_save(data);
-        socketIO.in(room).emit("messageRes", data);
+        if (!mutedUsers.includes(data.username)) {
+          chat_db_save(data);
+          socketIO.in(room).emit("messageRes", data);
+        }
       });
 
       // [TODO] On disconnect
@@ -52,12 +54,29 @@ function socket(socketIO) {
 
         console.log(`${username} has left the chat`);
       });
-      socket.on("delete_msg", async (messageID) => {
-        console.log("message delete request", messageID);
+      socket.on("delete_msg", async (data) => {
+        console.log("message delete request", data.messageID);
         //socket.emit("delete_msg_res", messageID);
-        await chat_db_delete(messageID);
-        const chats = await chat_db_get();
-        socket.emit("delete_msg_res", chats);
+
+        if (
+          adminUsers.includes(data.username) ||
+          data.username === data.messageUser
+        ) {
+          await chat_db_delete(data.messageID);
+          const chats = await chat_db_get();
+          socket.emit("delete_msg_res", chats);
+        } else {
+          socket.emit("not_admin", data.username);
+        }
+      });
+      socket.on("mute_user", async (data) => {
+        console.log("mute user request", data.messageUser);
+        if (adminUsers.includes(data.username)) {
+          mutedUsers.push(data.messageUser);
+          console.log(mutedUsers);
+        } else {
+          socket.emit("not_admin", data.username);
+        }
       });
     });
 
