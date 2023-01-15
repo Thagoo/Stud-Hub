@@ -72,9 +72,11 @@ const Chat = ({ toggleDark, settoggleDark, username, socket, room }) => {
   useEffect(() => {
     socket.on("delete_msg_res", (data) => {
       console.log("working");
-      setMessages([...messages, ...data]);
+      setMessages([messages, ...data]);
+      console.log([messages]);
     });
-  }, []);
+  });
+
   useEffect(() => {
     // 👇️ scroll to bottom every time messages change
     lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });

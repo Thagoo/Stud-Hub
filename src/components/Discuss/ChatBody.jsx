@@ -30,7 +30,6 @@ const ChatBody = ({ username, messages, socket, room, lastMessageRef }) => {
   const [optionShow, setOptionShow] = useState(null);
   const handleOptionShow = (event, id) => {
     setOptionShow(event.currentTarget);
-
     setMessageID(id);
   };
 
@@ -42,8 +41,8 @@ const ChatBody = ({ username, messages, socket, room, lastMessageRef }) => {
 
   const handleDeleteMsg = (messageID) => {
     console.log(messageID);
-    handleOptionClose();
     socket.emit("delete_msg", messageID);
+    handleOptionClose();
   };
   const closeSnackBar = (
     <IconButton
