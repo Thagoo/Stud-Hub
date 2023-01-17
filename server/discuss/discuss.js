@@ -7,12 +7,13 @@ let time = `${time_h}:${time_m}`;
 let chatRoom = "";
 let allUsers = [];
 let mutedUsers = [];
-let adminUsers = [];
+let adminUsers = ["Lohith", "akarsh"];
 function leaveRoom(userID, chatRoomUsers) {
   return chatRoomUsers.filter((user) => user.id != userID);
 }
 function socket(socketIO) {
   socketIO.on(`connection`, (socket) => {
+    socketIO.emit("id", { socketID: socket.id });
     console.log(`status: ${socket.id} user just connected!`);
 
     socket.on("join_room", async (data) => {
@@ -33,10 +34,17 @@ function socket(socketIO) {
       socketIO.to(room).emit("room_users", chatRoomUsers);
       socket.emit("room_users", chatRoomUsers);
       socket.on("message", (data) => {
-        console.log(data.username, data.message, data.id, data.socketID, time);
+        console.log(
+          data.username,
+          data.message,
+          data.id,
+          data.socketID,
+          data.time,
+          data.room
+        );
         if (!mutedUsers.includes(data.username)) {
           chat_db_save(data);
-          socketIO.in(room).emit("messageRes", data);
+          socketIO.to(room).emit("messageRes", data);
         }
       });
 
@@ -72,8 +80,13 @@ function socket(socketIO) {
       socket.on("mute_user", async (data) => {
         console.log("mute user request", data.messageUser);
         if (adminUsers.includes(data.username)) {
-          mutedUsers.push(data.messageUser);
-          console.log(mutedUsers);
+          if (mutedUsers.includes(data.messageUser)) {
+            socket.emit("mute_exist", data.messageUser);
+          } else {
+            mutedUsers.push(data.messageUser);
+            socket.emit("mute_success", data.messageUser);
+            console.log(mutedUsers);
+          }
         } else {
           socket.emit("not_admin", data.username);
         }

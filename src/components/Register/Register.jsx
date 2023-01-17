@@ -17,7 +17,7 @@ const Register = () => {
       .min(3, "Mininum 3 characters")
       .max(15, "Maximum 15 characters")
       .matches(
-        /^[a-zA-Z0-9@]+$/,
+        /^[a-zA-Z0-9]+$/,
         "This field cannot contain white space and special character"
       )
       .required(),

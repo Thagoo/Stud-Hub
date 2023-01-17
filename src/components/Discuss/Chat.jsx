@@ -98,6 +98,7 @@ const Chat = ({ toggleDark, settoggleDark, username, socket, room }) => {
                   <img className="logo-header-chat" src="stud-logo.svg" />
                 </Navbar.Brand>
               </LinkContainer>
+              <Navbar.Brand>{room}</Navbar.Brand>
             </Nav>
 
             <Fab

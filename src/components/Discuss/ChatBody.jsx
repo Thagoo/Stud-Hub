@@ -84,6 +84,18 @@ const ChatBody = ({ username, messages, socket, room, lastMessageRef }) => {
       setOpen(true);
     });
   });
+  useEffect(() => {
+    socket.on("mute_success", (user) => {
+      setGreeting(`${user} has been muted successfully`);
+      setOpen(true);
+    });
+  });
+  useEffect(() => {
+    socket.on("mute_exist", (user) => {
+      setGreeting(`${user} has already been muted`);
+      setOpen(true);
+    });
+  });
   return (
     <>
       <Grid item md={9}>

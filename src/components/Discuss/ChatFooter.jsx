@@ -18,6 +18,7 @@ const ChatFooter = ({ username, socket, room }) => {
         id: `${socket.id}${Math.random()}`,
         sodketID: socket.id,
         time: Time,
+        room: room,
       });
     }
     setMessage("");
