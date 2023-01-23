@@ -98,6 +98,7 @@ const Chat = ({ toggleDark, settoggleDark, username, socket, room }) => {
                   <img className="logo-header-chat" src="stud-logo.svg" />
                 </Navbar.Brand>
               </LinkContainer>
+              <Fab variant="extended">{room}</Fab>
             </Nav>
 
             <Fab
@@ -115,7 +116,7 @@ const Chat = ({ toggleDark, settoggleDark, username, socket, room }) => {
         </Navbar>
 
         <Grid container component={Paper} className={classes.root}>
-          <ChatBar socket={socket} username={username}></ChatBar>
+          <ChatBar socket={socket} username={username} room={room}></ChatBar>
           <ChatBody
             username={username}
             messages={messages}
