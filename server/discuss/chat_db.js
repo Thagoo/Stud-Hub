@@ -22,18 +22,41 @@ const chatSchema = new mongoose.Schema({
   id: String,
   socketID: String,
   time: String,
+  room: String,
 });
 
-const Chat = new mongoose.model("Chat", chatSchema);
+const BCA = new mongoose.model("Bca", chatSchema);
+const BCOM = new mongoose.model("Bcom", chatSchema);
+const BA = new mongoose.model("BA", chatSchema);
 
 function chat_db_save(data) {
-  const chat = new Chat({
-    message: data.message,
-    username: data.username,
-    id: data.id,
-    time: data.time,
-  });
-  console.log(chat);
+  if (data.room === "bca") {
+    var chat = new BCA({
+      message: data.message,
+      username: data.username,
+      id: data.id,
+      time: data.time,
+      room: data.room,
+    });
+  } else if (data.room === "bcom") {
+    var chat = new BCOM({
+      message: data.message,
+      username: data.username,
+      id: data.id,
+      time: data.time,
+      room: data.room,
+    });
+  } else {
+    var chat = new BA({
+      message: data.message,
+      username: data.username,
+      id: data.id,
+      time: data.time,
+      room: data.room,
+    });
+  }
+
+  //console.log(chat);
   chat.save((err) => {
     if (err) {
       console.log(err);
@@ -43,8 +66,15 @@ function chat_db_save(data) {
   });
 }
 
-async function chat_db_get() {
-  let chats = await Chat.find({}).exec();
+async function chat_db_get(room) {
+  if (room === "bca") {
+    var chats = await BCA.find({}).exec();
+  } else if (room === "bcom") {
+    var chats = await BCOM.find({}).exec();
+  } else {
+    var chats = await BA.find({}).exec();
+  }
+
   //console.log(chats);
   return chats;
 }

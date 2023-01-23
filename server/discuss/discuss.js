@@ -21,7 +21,7 @@ function socket(socketIO) {
       socket.to(room).emit("user_joined", {
         username: username,
       });
-      const chats = await chat_db_get();
+      const chats = await chat_db_get(room);
       //console.log(chats);
       socketIO.to(room).emit("chat_history", chats);
       chatRoom = room;
@@ -38,7 +38,8 @@ function socket(socketIO) {
           data.message,
           data.id,
           data.socketID,
-          data.time
+          data.time,
+          data.room
         );
         if (!mutedUsers.includes(data.username)) {
           chat_db_save(data);

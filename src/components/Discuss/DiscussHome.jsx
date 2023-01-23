@@ -49,6 +49,8 @@ const Discuss = (props) => {
                 >
                   <option value="">Select Room</option>
                   <option value="bca">BCA</option>
+                  <option value="bcom">BCom</option>
+                  <option value="ba">BA</option>
                 </Form.Select>
               </Form.Group>
 
