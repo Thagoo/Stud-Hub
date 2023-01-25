@@ -1,4 +1,10 @@
-const { chat_db_save, chat_db_get, chat_db_delete } = require("./chat_db");
+const {
+  chat_db_save,
+  chat_db_get,
+  chat_db_delete,
+  chat_db_mute,
+  chat_db_mute_get,
+} = require("./chat_db");
 let date = new Date();
 let time_h = date.getHours();
 let time_m = date.getMinutes();
@@ -8,6 +14,7 @@ let chatRoom = "";
 let allUsers = [];
 let mutedUsers = [];
 let adminUsers = [];
+
 function leaveRoom(userID, chatRoomUsers) {
   return chatRoomUsers.filter((user) => user.id != userID);
 }
@@ -21,6 +28,12 @@ function socket(socketIO) {
       socket.to(room).emit("user_joined", {
         username: username,
       });
+      const mutedUsersList = await chat_db_mute_get();
+      mutedUsersList.map((users) => {
+        mutedUsers.push(users.username);
+      });
+      //console.log(mutedUsersList);
+
       const chats = await chat_db_get(room);
       //console.log(chats);
       socketIO.to(room).emit("chat_history", chats);
@@ -77,17 +90,19 @@ function socket(socketIO) {
         }
       });
       socket.on("mute_user", async (data) => {
-        console.log("mute user request", data.messageUser);
-        if (adminUsers.includes(data.username)) {
-          if (mutedUsers.includes(data.messageUser)) {
-            socket.emit("mute_exist", data.messageUser);
+        console.log("mute user request", data.muteUsername);
+        if (adminUsers.includes(data.adminUsername)) {
+          if (mutedUsers.includes(data.muteUsername)) {
+            socket.emit("mute_exist", data.muteUsername);
+            console.log("user already muted");
           } else {
-            mutedUsers.push(data.messageUser);
-            socket.emit("mute_success", data.messageUser);
+            chat_db_mute(data);
+            mutedUsers.push(data.muteUsername);
+            socket.emit("mute_success", data.muteUsername);
             console.log(mutedUsers);
           }
         } else {
-          socket.emit("not_admin", data.username);
+          socket.emit("not_admin", data.adminUsername);
         }
       });
     });

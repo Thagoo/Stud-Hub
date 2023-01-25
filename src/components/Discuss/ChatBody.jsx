@@ -41,8 +41,9 @@ const ChatBody = ({ username, messages, socket, room, lastMessageRef }) => {
 
   const handleMute = () => {
     socket.emit("mute_user", {
-      username: username,
-      messageUser: messageUser,
+      adminUsername: username,
+      muteUsername: messageUser,
+      room: room,
     });
     handleOptionClose();
   };

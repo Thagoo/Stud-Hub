@@ -25,9 +25,50 @@ const chatSchema = new mongoose.Schema({
   room: String,
 });
 
+const specialUsersSchema = new mongoose.Schema({
+  username: String,
+  room: String,
+});
+
 const BCA = new mongoose.model("Bca", chatSchema);
 const BCOM = new mongoose.model("Bcom", chatSchema);
 const BA = new mongoose.model("BA", chatSchema);
+
+const MutedUsers = new mongoose.model("MutedUsers", specialUsersSchema);
+const AdminUsers = new mongoose.model("AdminUsers", specialUsersSchema);
+
+function chat_db_mute(data) {
+  MutedUsers.findOne({ username: data.muteUsername }, (err, user) => {
+    if (user) {
+      console.log("Mute user exist");
+      return;
+    } else {
+      mutedUsers = new MutedUsers({
+        username: data.muteUsername,
+        room: data.room,
+      });
+      mutedUsers.save((err) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("Muted User saved in database", data);
+        }
+      });
+    }
+  });
+}
+
+async function chat_db_mute_get(data) {
+  const mutedUsers = await MutedUsers.find({}).exec();
+  return mutedUsers;
+}
+
+function chat_db_admin(data) {
+  adminUsers = new AdminUsers({
+    username: data.username,
+    room: data.room,
+  });
+}
 
 function chat_db_save(data) {
   if (data.room === "bca") {
@@ -88,4 +129,10 @@ async function chat_db_delete(messageID) {
       console.log("chat deletion failed", error);
     });
 }
-module.exports = { chat_db_save, chat_db_get, chat_db_delete };
+module.exports = {
+  chat_db_save,
+  chat_db_get,
+  chat_db_delete,
+  chat_db_mute,
+  chat_db_mute_get,
+};
