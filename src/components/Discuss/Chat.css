@@ -37,6 +37,13 @@
   word-wrap: break-word;
   max-width: 50vh;
 }
+.loading-modal .modal-content {
+  display: block;
+  margin-top: 50%;
+  border: none !important;
+  height: fit-content;
+  background-color: transparent;
+}
 @media only screen and (max-width: 768px) {
   .logo-header-chat {
     height: 6vh;

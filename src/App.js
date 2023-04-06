@@ -8,6 +8,8 @@ import Chat from "./components/Discuss/Chat";
 import io from "socket.io-client";
 import { createTheme, ThemeProvider } from "@material-ui/core/styles";
 import "product-sans-webfont";
+import axios from "axios";
+
 let loggedInUser = localStorage.getItem("user");
 
 function requireAuth() {
@@ -31,49 +33,59 @@ function App() {
       type: toggleDark ? "dark" : "light",
     },
   });
+  const socket = io();
+  // let socketID = localStorage.getItem("socketID");
 
-  const socket = io.connect();
+  // const [socket, setSocket] = useState(null);
+  // useEffect(() => {
+  //   const newSocket = io("");
+  //   setSocket(newSocket);
+  //   return () => {
+  //     newSocket.disconnect();
+  //   };
+  // }, []);
+
   return (
     <div>
       <BrowserRouter>
-        <ThemeProvider theme={myTheme}>
-          <Routes>
-            <Route
-              exact
-              path="/"
-              element={
-                requireAuth() ? (
-                  <Home
-                    username={loggedInUser}
-                    socket={socket}
-                    room={room}
-                    setRoom={setRoom}
-                  />
-                ) : (
-                  <LoginTab />
-                )
-              }
-            />
-            <Route
-              path="/studymaterials"
-              element={
-                requireAuth() ? (
-                  <StudyMaterials
-                    username={loggedInUser}
-                    socket={socket}
-                    room={room}
-                    setRoom={setRoom}
-                  />
-                ) : (
-                  <LoginTab />
-                )
-              }
-            />
+        <Routes>
+          <Route
+            exact
+            path="/"
+            element={
+              requireAuth() ? (
+                <Home
+                  username={loggedInUser}
+                  socket={socket}
+                  room={room}
+                  setRoom={setRoom}
+                />
+              ) : (
+                <LoginTab />
+              )
+            }
+          />
+          <Route
+            path="/studymaterials"
+            element={
+              requireAuth() ? (
+                <StudyMaterials
+                  username={loggedInUser}
+                  socket={socket}
+                  room={room}
+                  setRoom={setRoom}
+                />
+              ) : (
+                <LoginTab />
+              )
+            }
+          />
 
-            <Route
-              path="/chat"
-              element={
-                requireAuth() ? (
+          <Route
+            path="/chat"
+            element={
+              requireAuth() ? (
+                <ThemeProvider theme={myTheme}>
                   <Chat
                     toggleDark={toggleDark}
                     settoggleDark={settoggleDark}
@@ -81,13 +93,13 @@ function App() {
                     socket={socket}
                     room={room}
                   />
-                ) : (
-                  <LoginTab />
-                )
-              }
-            />
-          </Routes>
-        </ThemeProvider>
+                </ThemeProvider>
+              ) : (
+                <LoginTab />
+              )
+            }
+          />
+        </Routes>
       </BrowserRouter>
     </div>
   );

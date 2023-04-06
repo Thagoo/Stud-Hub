@@ -13,7 +13,18 @@ const Login = () => {
   const handleLogout = () => {
     localStorage.clear();
   };
-
+  const authenticate = async () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      await axios.post("/authenticate", { token: token }).then((response) => {
+        if (response.status === 200) {
+          localStorage.setItem("user", response.data);
+          console.log(response.data);
+          window.location.reload();
+        }
+      });
+    }
+  };
   // login the user
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
     // send the uname and password to the server
@@ -22,8 +33,10 @@ const Login = () => {
       .post("/login", values)
       .then((response) => {
         setSubmitting(false);
-        localStorage.setItem("user", JSON.stringify(response.data));
-        window.location.reload();
+        if (response.data.status === "ok") {
+          localStorage.setItem("token", response.data.data);
+          setSubmitting(false);
+        }
       })
       .catch((error) => {
         setErrors({
@@ -32,6 +45,7 @@ const Login = () => {
         });
         setSubmitting(false);
       });
+    await authenticate();
   };
 
   return (

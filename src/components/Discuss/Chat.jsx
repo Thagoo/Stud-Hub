@@ -50,9 +50,6 @@ const Chat = ({ toggleDark, settoggleDark, username, socket, room }) => {
     settoggleDark(!toggleDark);
   };
 
-  const handleMute = () => {
-    socket.emit("mute", username);
-  };
   const handleLeaveChat = () => {
     socket.emit("leave_room", { username, room });
     navigate("/");
@@ -66,14 +63,7 @@ const Chat = ({ toggleDark, settoggleDark, username, socket, room }) => {
 
   useEffect(() => {
     socket.on("chat_history", (data) => {
-      setMessages([...messages, ...data]);
-    });
-  }, []);
-  useEffect(() => {
-    socket.on("delete_msg_res", (data) => {
-      console.log("working");
-      setMessages([messages, ...data]);
-      console.log([messages]);
+      setMessages([...data]);
     });
   });
 

@@ -7,7 +7,6 @@ function uploadToGoogleDrive(file, auth, subject, socket) {
 
   const parentID = folderID(subject);
   console.log(subject, parentID);
-  console.log("test", file.originalname);
   const fileMetadata = {
     name: file.originalname,
     parents: [parentID],
@@ -25,9 +24,7 @@ function uploadToGoogleDrive(file, auth, subject, socket) {
     },
     {
       onUploadProgress: (evt) => {
-        console.log("test2", file.size);
         const progress = Math.round((evt.bytesRead / file.size) * 100);
-        console.log("test", progress);
         socket.emit("progress", progress);
       },
     },

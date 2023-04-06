@@ -1,16 +1,18 @@
 import NavbarHeader from "../Navbar/Navbar";
 import { Container, Row, Col, Card, Nav } from "react-bootstrap";
+import { LinkContainer } from "react-router-bootstrap";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import "./Home.css";
-import articles from "./news.json";
+import articles from "./demo-news.json";
 import Discuss from "../Discuss/DiscussHome";
 import { color } from "@mui/system";
 
 import EmailTwoToneIcon from "@mui/icons-material/EmailTwoTone";
 import CallTwoToneIcon from "@mui/icons-material/CallTwoTone";
 import LocationOnTwoToneIcon from "@mui/icons-material/LocationOnTwoTone";
-import DataObjectRoundedIcon from "@mui/icons-material/DataObjectRounded";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { Fab } from "@mui/material";
 
 const home = {
   bg: {
@@ -25,8 +27,8 @@ function Home(props) {
 
   const [newsData, setNewsData] = useState([]);
   const services = async () => {
-    const NewsApi = await axios.get("/envapi");
-    const response = await axios.get(NewsApi.data);
+    // const NewsApi = await axios.get("/envapi");
+    // const response = await axios.get(NewsApi.data);
     setNewsData(articles.articles);
   };
 
@@ -70,27 +72,34 @@ function Home(props) {
           </div>
         </Container>
       </div>
-      <Container className="news-container">
-        <Row md={2} xs="auto">
-          {newsData.map((article, i) => (
-            <Col sm={2} key={i}>
-              <a
-                style={{ color: `#5d5d5d`, textDecoration: `none` }}
-                href={article.url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Card hoverable="true" className="news-cards">
-                  <Card.Img variant="top" src={article.urlToImage} />
-                  <Card.Body>
-                    <Card.Title>{article.title}</Card.Title>
-                    <Card.Text>{article.description}</Card.Text>
-                  </Card.Body>
-                </Card>
-              </a>
+      <Container className="news-container" fluid>
+        <Container>
+          <Row md={1}>
+            <Col sm={1}>
+              {newsData.map((article, i) => (
+                <a
+                  style={{ color: `#5d5d5d`, textDecoration: `none` }}
+                  href={article.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Card hoverable="true" className="news-cards">
+                    <Card.Img variant="top" src={article.urlToImage} />
+                    <Card.Body>
+                      <Card.Title>{article.title}</Card.Title>
+                      <Card.Text>{article.description}</Card.Text>
+                    </Card.Body>
+                  </Card>
+                </a>
+              ))}
             </Col>
-          ))}
-        </Row>
+          </Row>
+        </Container>
+        <a className="gotop" href="#">
+          <Fab color="primary">
+            <KeyboardArrowUpIcon />
+          </Fab>
+        </a>
       </Container>
 
       <div className="stud-footer">

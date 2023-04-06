@@ -21,7 +21,7 @@ const NavbarHeader = (props) => {
 
   const handleLogout = () => {
     localStorage.clear();
-    window.location.href = "./";
+    window.location.reload();
   };
 
   useEffect(() => {});

@@ -1,8 +1,5 @@
 const mongoose = require("mongoose");
 
-const path = require("path");
-require("dotenv").config({ path: "./../.env" });
-
 MONGODB_CHATDB_URL = process.env.MONGODB_URL;
 
 mongoose.connect(
@@ -37,7 +34,7 @@ const BA = new mongoose.model("BA", chatSchema);
 const MutedUsers = new mongoose.model("MutedUsers", specialUsersSchema);
 const AdminUsers = new mongoose.model("AdminUsers", specialUsersSchema);
 
-function chat_db_mute(data) {
+async function chat_db_mute(data) {
   MutedUsers.findOne({ username: data.muteUsername }, (err, user) => {
     if (user) {
       console.log("Mute user exist");
@@ -54,6 +51,22 @@ function chat_db_mute(data) {
           console.log("Muted User saved in database", data);
         }
       });
+    }
+  });
+}
+
+async function chat_db_unmute(data) {
+  MutedUsers.findOne({ username: data.unmuteUsername }, (err, user) => {
+    if (user) {
+      MutedUsers.deleteOne({ username: data.unmuteUsername })
+        .then(() => {
+          console.log("user Unmuted", data.unmuteUsername);
+        })
+        .catch((error) => {
+          console.log("unmute failed ", error);
+        });
+    } else {
+      console.log("User does not exist in Mute user list", data.unmuteUsername);
     }
   });
 }
@@ -120,19 +133,38 @@ async function chat_db_get(room) {
   return chats;
 }
 
-async function chat_db_delete(messageID) {
-  Chat.deleteOne({ id: messageID })
-    .then(() => {
-      console.log("message deleted", messageID);
-    })
-    .catch((error) => {
-      console.log("chat deletion failed", error);
-    });
+async function chat_db_delete(messageID, room) {
+  if (room === "bca") {
+    BCA.deleteOne({ id: messageID })
+      .then(() => {
+        console.log("message deleted", messageID, room);
+      })
+      .catch((error) => {
+        console.log("chat deletion failed", error);
+      });
+  } else if (room === "bcom") {
+    BCOM.deleteOne({ id: messageID })
+      .then(() => {
+        console.log("message deleted", messageID, room);
+      })
+      .catch((error) => {
+        console.log("chat deletion failed", error);
+      });
+  } else {
+    BA.deleteOne({ id: messageID })
+      .then(() => {
+        console.log("message deleted", messageID, room);
+      })
+      .catch((error) => {
+        console.log("chat deletion failed", error);
+      });
+  }
 }
 module.exports = {
   chat_db_save,
   chat_db_get,
   chat_db_delete,
   chat_db_mute,
+  chat_db_unmute,
   chat_db_mute_get,
 };

@@ -1,7 +1,8 @@
 .login-bg {
   padding-top: 5%;
   padding-bottom: 10%;
-  background-color: #0d6efd;
+
+  background: #0059de;
   overflow-x: hidden;
 }
 .auth-inner {

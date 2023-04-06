@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ChatFooter from "./ChatFooter";
 import "./Chat.css";
-import { Alert } from "react-bootstrap";
+import { Alert, Modal } from "react-bootstrap";
 import {
   Grid,
   List,
@@ -13,6 +13,7 @@ import {
   Popover,
   MenuItem,
   Avatar,
+  CircularProgress,
 } from "@material-ui/core/";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
@@ -24,6 +25,12 @@ const ChatBody = ({ username, messages, socket, room, lastMessageRef }) => {
   const [greeting, setGreeting] = useState("");
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const [showLoading, setShowLoading] = useState(false);
+
+  const handleCloseLoading = () => {
+    setShowLoading(false);
   };
 
   const [messageID, setMessageID] = useState("");
@@ -40,6 +47,7 @@ const ChatBody = ({ username, messages, socket, room, lastMessageRef }) => {
   const msgOption = open ? "simple-popover" : undefined;
 
   const handleMute = () => {
+    setShowLoading(true);
     socket.emit("mute_user", {
       adminUsername: username,
       muteUsername: messageUser,
@@ -47,12 +55,22 @@ const ChatBody = ({ username, messages, socket, room, lastMessageRef }) => {
     });
     handleOptionClose();
   };
-
+  const handleUnmute = () => {
+    setShowLoading(true);
+    socket.emit("unmute_user", {
+      adminUsername: username,
+      unmuteUsername: messageUser,
+      room: room,
+    });
+    handleOptionClose();
+  };
   const handleDeleteMsg = () => {
+    setShowLoading(true);
     socket.emit("delete_msg", {
       username: username,
       messageUser: messageUser,
       messageID: messageID,
+      room: room,
     });
     handleOptionClose();
   };
@@ -71,35 +89,77 @@ const ChatBody = ({ username, messages, socket, room, lastMessageRef }) => {
     socket.on("user_left", (data) => {
       setGreeting(data.username + " has left the chat");
       setOpen(true);
+      setShowLoading(false);
     });
   });
   useEffect(() => {
     socket.on("user_joined", (data) => {
       setGreeting(data.username + " has joined the chat");
       setOpen(true);
+      setShowLoading(false);
     });
   });
   useEffect(() => {
     socket.on("not_admin", (user) => {
       setGreeting(`${user} is not admin to do this task`);
       setOpen(true);
+      setShowLoading(false);
     });
   });
   useEffect(() => {
     socket.on("mute_success", (user) => {
       setGreeting(`${user} has been muted successfully`);
       setOpen(true);
+      setShowLoading(false);
+    });
+  });
+  useEffect(() => {
+    socket.on("unmute_success", (user) => {
+      setGreeting(`${user} has been unmuted successfully`);
+      setOpen(true);
+      setShowLoading(false);
+    });
+  });
+  useEffect(() => {
+    socket.on("not_muted", (user) => {
+      setGreeting(`${user} is not muted`);
+      setOpen(true);
+      setShowLoading(false);
     });
   });
   useEffect(() => {
     socket.on("mute_exist", (user) => {
       setGreeting(`${user} has already been muted`);
       setOpen(true);
+      setShowLoading(false);
+    });
+  });
+  useEffect(() => {
+    socket.on("self_mute", () => {
+      setGreeting(`self mute is not allowed`);
+      setOpen(true);
+      setShowLoading(false);
+    });
+  });
+  useEffect(() => {
+    socket.on("delete_msg_res", () => {
+      setShowLoading(false);
     });
   });
   return (
     <>
       <Grid item md={9}>
+        <Modal
+          show={showLoading}
+          onHide={handleCloseLoading}
+          backdrop="static"
+          keyboard={false}
+          className="loading-modal"
+        >
+          <center>
+            <CircularProgress />
+          </center>
+        </Modal>
         <List className="message-area">
           <Snackbar
             anchorOrigin={{ vertical: "center", horizontal: "center" }}
@@ -143,9 +203,15 @@ const ChatBody = ({ username, messages, socket, room, lastMessageRef }) => {
                   <DeleteIcon style={{ marginRight: `6px` }} />
                   Delete
                 </MenuItem>
+
+                <Divider style={{ backgroundColor: "black" }} />
                 <MenuItem onClick={handleMute}>
                   <RemoveCircleRoundedIcon style={{ marginRight: `6px` }} />
                   Mute User
+                </MenuItem>
+                <MenuItem onClick={handleUnmute}>
+                  <RemoveCircleRoundedIcon style={{ marginRight: `6px` }} />
+                  Unmute User
                 </MenuItem>
               </Popover>
               <Grid container>

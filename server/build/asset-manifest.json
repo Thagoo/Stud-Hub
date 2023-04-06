@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "./static/css/main.dd6566fe.css",
+    "main.js": "./static/js/main.99edb801.js",
+    "static/js/787.e2e4ebf8.chunk.js": "./static/js/787.e2e4ebf8.chunk.js",
+    "static/media/GoogleSans-Regular.ttf": "./static/media/GoogleSans-Regular.7bec32a47f9ccc643ef2.ttf",
+    "static/media/GoogleSans-Italic.ttf": "./static/media/GoogleSans-Italic.40bb50bd202405745006.ttf",
+    "static/media/GoogleSans-BoldItalic.ttf": "./static/media/GoogleSans-BoldItalic.d282e9c31d0f894a7f06.ttf",
+    "static/media/GoogleSans-Medium.ttf": "./static/media/GoogleSans-Medium.963c3e555aaada9ef8a9.ttf",
+    "static/media/GoogleSans-Bold.ttf": "./static/media/GoogleSans-Bold.d907e4bf3e32637a636e.ttf",
+    "index.html": "./index.html",
+    "main.dd6566fe.css.map": "./static/css/main.dd6566fe.css.map",
+    "main.99edb801.js.map": "./static/js/main.99edb801.js.map",
+    "787.e2e4ebf8.chunk.js.map": "./static/js/787.e2e4ebf8.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.dd6566fe.css",
+    "static/js/main.99edb801.js"
+  ]
+}

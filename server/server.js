@@ -10,6 +10,9 @@ const server = app.listen("8000", () => {
   console.log(`Server listening on 8000`);
 });
 
+// JWT
+const jwt = require("jsonwebtoken");
+const JWT_SECRET = "wqeruitysadkczmcv134754237!@##$%^*()";
 // Chat Server
 const server2 = require("http").createServer(server);
 const socketIO = new Server(server, {
@@ -46,12 +49,13 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const path = require("path");
-require("dotenv").config({ path: "./.env" });
+// require("dotenv").config({ path: "./.env" });
 const bcrypt = require("bcrypt");
 
 MONGODB_URL = process.env.MONGODB_URL;
 PORT = process.env.PORT;
 NEWS_API_ID = process.env.NEWS_API_ID;
+
 mongoose.connect(
   MONGODB_URL,
   {
@@ -86,7 +90,8 @@ app.post("/login", async (req, res) => {
 
   // verify password with encrypted password
   if (await bcrypt.compare(passwd, user.passwd)) {
-    res.send(uname);
+    const token = jwt.sign({ uname: uname }, JWT_SECRET);
+    return res.json({ status: "ok", data: token });
   } else {
     res.status(400).send("password is incorrect");
   }
@@ -121,6 +126,16 @@ app.post("/register", async (req, res) => {
     }
   });
 });
+app.post("/authenticate", async (req, res) => {
+  console.log("trigger");
+  const token = req.body.token;
+  console.log(token);
+  const verify = await jwt.verify(token, JWT_SECRET);
+  if (verify) {
+    console.log("verified");
+    res.status(200).send(verify.uname);
+  }
+});
 socketIO.on("connection", async (socket) => {
   console.log("Uploader socket connected");
   app.post(
@@ -145,12 +160,11 @@ socketIO.on("connection", async (socket) => {
     }
   );
 });
+app.get("/envapi", async (req, res) => {
+  res.send(NEWS_API_ID);
+});
 app.use(express.static(path.join(__dirname, "build")));
 
 app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "build", "index.html"));
-});
-
-app.get("/envapi", async (req, res) => {
-  res.send(NEWS_API_ID);
 });
